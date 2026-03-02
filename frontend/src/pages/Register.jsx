@@ -7,7 +7,7 @@ import React from 'react'
 export default function Register() {
   const { setUser } = useAuth()
   const navigate = useNavigate()
-  const [form, setForm] = useState({ name: '', email: '', password: '' })
+  const [form, setForm] = useState({ name: '', email: '', password: '', role: '' })
   const [errors, setErrors] = useState({})
   const [serverError, setServerError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -17,6 +17,7 @@ export default function Register() {
     if (!form.name.trim()) newErrors.name = 'Name is required'
     if (!form.email.includes('@')) newErrors.email = 'Enter a valid email'
     if (form.password.length < 6) newErrors.password = 'Password must be at least 6 characters'
+    if (!form.role) newErrors.role = 'Please select a role'
     return newErrors
   }
 
@@ -26,16 +27,23 @@ export default function Register() {
     if (Object.keys(validationErrors).length > 0) return setErrors(validationErrors)
     setErrors({})
     setLoading(true)
+    
     try {
-      const res = await axios.post('/auth/register', form)
-      const userData = res.data
-      setUser(userData)
-      // new users are always 'patient' role
-      navigate('/patient/dashboard')
-    } catch (err) {
-      setServerError(err.response?.data?.message || 'Registration failed')
-    } finally {
-      setLoading(false)
+        const res = await axios.post('/auth/register', form)
+        const userData = res.data
+        setUser(userData)
+        const ROLE_ROUTES = {
+            admin: '/admin/dashboard',
+            doctor: '/doctor/dashboard',
+            receptionist: '/receptionist/dashboard',
+            patient: '/patient/dashboard',
+        }
+
+        navigate(ROLE_ROUTES[userData.role] || '/patient/dashboard')
+    }   catch (err) {
+            setServerError(err.response?.data?.message || 'Registration failed')
+    }   finally {
+            setLoading(false)
     }
   }
 
@@ -55,8 +63,8 @@ export default function Register() {
           </div>
         </div>
 
-        <h2 className="text-white text-2xl font-bold mb-1">Create account</h2>
-        <p className="text-gray-500 text-sm mb-6">Register as a patient</p>
+        <h2 className="text-white text-2xl font-bold mb-1">Create Account</h2>
+        <p className="text-gray-500 text-sm mb-6">Create your clinic account</p>
 
         {serverError && (
           <div className="mb-5 px-4 py-3 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl">
@@ -65,9 +73,9 @@ export default function Register() {
         )}
 
         <div className="mb-4">
-          <label className="block text-gray-400 text-sm mb-1.5">Full Name</label>
+          <label className="block text-gray-400 text-sm mb-1.5">Full Name <span className="text-red-400">*</span></label>
           <input
-            placeholder="Ahmed Khan"
+            placeholder="Full name"
             value={form.name}
             onChange={e => handleChange('name', e.target.value)}
             className={`w-full bg-gray-800 border rounded-xl px-4 py-3 text-white text-sm outline-none transition
@@ -79,9 +87,9 @@ export default function Register() {
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-400 text-sm mb-1.5">Email</label>
+          <label className="block text-gray-400 text-sm mb-1.5">Email <span className="text-red-400">*</span></label>
           <input
-            placeholder="you@email.com"
+            placeholder="example@email.com"
             value={form.email}
             onChange={e => handleChange('email', e.target.value)}
             className={`w-full bg-gray-800 border rounded-xl px-4 py-3 text-white text-sm outline-none transition
@@ -93,10 +101,10 @@ export default function Register() {
         </div>
 
         <div className="mb-6">
-          <label className="block text-gray-400 text-sm mb-1.5">Password</label>
+          <label className="block text-gray-400 text-sm mb-1.5">Password <span className="text-red-400">*</span></label>
           <input
             type="password"
-            placeholder="Min 6 characters"
+            placeholder="Enter your password"
             value={form.password}
             onChange={e => handleChange('password', e.target.value)}
             className={`w-full bg-gray-800 border rounded-xl px-4 py-3 text-white text-sm outline-none transition
@@ -105,6 +113,25 @@ export default function Register() {
           <div className="min-h-[20px] mt-1">
             {errors.password && <p className="text-red-400 text-xs">⚠ {errors.password}</p>}
           </div>
+        </div>
+
+        <div className="mb-6">
+            <label className="block text-gray-400 text-sm mb-1.5">Role <span className="text-red-400">*</span></label>
+                <select
+                    value={form.role}
+                    onChange={e => handleChange('role', e.target.value)}
+                    className={`w-full bg-gray-800 border rounded-xl px-4 py-3 text-white text-sm outline-none transition
+                    ${errors.role ? 'border-red-500/50 bg-red-500/5' : 'border-gray-700 focus:border-violet-500'}`}
+                >
+                    <option value="">Select your role...</option>
+                    <option value="patient">Patient</option>
+                    <option value="doctor">Doctor</option>
+                    <option value="receptionist">Receptionist</option>
+                    <option value="admin">Admin</option>
+                </select>
+            <div className="min-h-[20px] mt-1">
+                {errors.role && <p className="text-red-400 text-xs">⚠ {errors.role}</p>}
+            </div>
         </div>
 
         <button

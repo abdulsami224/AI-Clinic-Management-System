@@ -8,7 +8,7 @@ export default function ManageDoctors() {
   const [doctors, setDoctors] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ name: '', email: '', password: '', specialization: '', phone: '' })
+  const [form, setForm] = useState({ name: '', email: '', password: '', specialization: '', phone: '', subscriptionPlan: 'free' })
   const [errors, setErrors] = useState({})
   const [submitting, setSubmitting] = useState(false)
   const [successMsg, setSuccessMsg] = useState('')
@@ -58,6 +58,12 @@ export default function ManageDoctors() {
 
   const handleToggle = async (id) => {
     await axios.patch(`/users/${id}/toggle`)
+    fetchDoctors()
+  }
+
+  const handlePlanChange = async (id, currentPlan) => {
+    const newPlan = currentPlan === 'pro' ? 'free' : 'pro'
+    await axios.patch(`/users/${id}/plan`, { subscriptionPlan: newPlan })
     fetchDoctors()
   }
 
@@ -116,10 +122,43 @@ export default function ManageDoctors() {
                 </div>
               ))}
             </div>
+            {/* Plan Selection */}
+            <div className="sm:col-span-2">
+              <label className="block text-gray-400 text-sm mb-2">Subscription Plan</label>
+              <div className="grid grid-cols-2 gap-3">
+
+                <div
+                  onClick={() => setForm({ ...form, subscriptionPlan: 'free' })}
+                  className={`cursor-pointer rounded-xl border p-4 transition
+                    ${form.subscriptionPlan === 'free'
+                      ? 'border-violet-500 bg-violet-500/10'
+                      : 'border-gray-700 bg-gray-800/60 hover:border-gray-500'}`}
+                >
+                  <p className="text-white font-semibold text-sm">Free Plan</p>
+                  <p className="text-gray-500 text-xs mt-1">Basic features only</p>
+                  <p className="text-gray-500 text-xs">No AI access</p>
+                  <p className="text-violet-400 font-bold mt-2">$0/mo</p>
+                </div>
+
+                <div
+                  onClick={() => setForm({ ...form, subscriptionPlan: 'pro' })}
+                  className={`cursor-pointer rounded-xl border p-4 transition
+                    ${form.subscriptionPlan === 'pro'
+                      ? 'border-amber-500 bg-amber-500/10'
+                      : 'border-gray-700 bg-gray-800/60 hover:border-gray-500'}`}
+                >
+                  <p className="text-white font-semibold text-sm">Pro Plan ⭐</p>
+                  <p className="text-gray-500 text-xs mt-1">Unlimited patients</p>
+                  <p className="text-gray-500 text-xs">Full AI access</p>
+                  <p className="text-amber-400 font-bold mt-2">$29/mo</p>
+                </div>
+
+              </div>
+            </div>
             <button
               onClick={handleSubmit}
               disabled={submitting}
-              className="mt-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition"
+              className="mt-8 bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition"
             >
               {submitting ? 'Creating...' : 'Create Doctor'}
             </button>
@@ -146,6 +185,7 @@ export default function ManageDoctors() {
                   <th className="text-left text-gray-500 font-medium px-6 py-4">Phone</th>
                   <th className="text-left text-gray-500 font-medium px-6 py-4">Status</th>
                   <th className="text-left text-gray-500 font-medium px-6 py-4">Action</th>
+                  <th className="text-left text-gray-500 font-medium px-6 py-4">Plan</th>
                 </tr>
               </thead>
               <tbody>
@@ -172,9 +212,20 @@ export default function ManageDoctors() {
                     <td className="px-6 py-4">
                       <button
                         onClick={() => handleToggle(doc._id)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${doc.isActive ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'}`}
+                        className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition ${doc.isActive ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'}`}
                       >
                         {doc.isActive ? 'Deactivate' : 'Activate'}
+                      </button>
+                    </td>
+                    <td className="px-6 py-4">
+                      <button
+                        onClick={() => handlePlanChange(doc._id, doc.subscriptionPlan)}
+                        className={`px-2 py-1.5 rounded-lg text-xs font-medium transition border
+                          ${doc.subscriptionPlan === 'pro'
+                            ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20'
+                            : 'bg-gray-700/50 text-gray-400 border-gray-600 hover:bg-gray-700'}`}
+                      >
+                        {doc.subscriptionPlan === 'pro' ? '⭐ Pro' : 'Free'}
                       </button>
                     </td>
                   </tr>
