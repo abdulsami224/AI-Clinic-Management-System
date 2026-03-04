@@ -50,7 +50,6 @@ export const toggleUserStatus = async (req, res) => {
     const user = await User.findById(req.params.id)
     if (!user) return res.status(404).json({ message: 'User not found' })
 
-    // ✅ updateOne bypasses pre-save hook completely
     await User.updateOne(
       { _id: req.params.id },
       { $set: { isActive: !user.isActive } }
