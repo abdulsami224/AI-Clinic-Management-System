@@ -44,9 +44,7 @@ export default function Login() {
     // }
 
     try {
-      console.log('Sending login request...')
       const res = await axios.post('/auth/login', form)
-      console.log('Login response:', res.data)
       const userData = res.data
       setUser(userData)
       const routes = {
@@ -57,7 +55,6 @@ export default function Login() {
       }
       navigate(routes[userData.role] || '/login')
     } catch (err) {
-      console.log('Login error:', err)
       console.log('Error response:', err.response)
       setServerError(err.response?.data?.message || 'Invalid credentials')
     } finally {

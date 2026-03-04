@@ -2,8 +2,12 @@ import User from '../models/User.js'
 import bcrypt from 'bcryptjs'
 
 export const getAllDoctors = async (req, res) => {
-  const doctors = await User.find({ role: 'doctor', isActive: true }).select('-password')
-  res.json(doctors)
+  try {
+    const doctors = await User.find({ role: 'doctor' }).select('-password')
+    res.json(doctors)
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
 }
 
 export const getAllUsers = async (req, res) => {
@@ -24,25 +28,52 @@ export const createDoctor = async (req, res) => {
 }
 
 export const createReceptionist = async (req, res) => {
-  const { name, email, password, phone } = req.body
-  const exists = await User.findOne({ email })
-  if (exists) return res.status(400).json({ message: 'Email already exists' })
-  const user = await User.create({ name, email, password, role: 'receptionist', phone })
-  res.status(201).json({ message: 'Receptionist created', user })
+  try {
+    const { name, email, password, phone } = req.body
+    const exists = await User.findOne({ email })
+    if (exists) return res.status(400).json({ message: 'Email already exists' })
+    const user = await User.create({ 
+      name, email, password, 
+      role: 'receptionist', 
+      phone
+      // ✅ no subscriptionPlan needed
+    })
+    res.status(201).json({ message: 'Receptionist created', user })
+  } catch (error) {
+    console.error('Create receptionist error:', error.message)
+    res.status(500).json({ message: error.message })
+  }
 }
 
 export const toggleUserStatus = async (req, res) => {
-  const user = await User.findById(req.params.id)
-  if (!user) return res.status(404).json({ message: 'User not found' })
-  user.isActive = !user.isActive
-  await user.save()
-  res.json({ message: `User ${user.isActive ? 'activated' : 'deactivated'}` })
+  try {
+    const user = await User.findById(req.params.id)
+    if (!user) return res.status(404).json({ message: 'User not found' })
+
+    // ✅ updateOne bypasses pre-save hook completely
+    await User.updateOne(
+      { _id: req.params.id },
+      { $set: { isActive: !user.isActive } }
+    )
+
+    res.json({ message: 'Status updated successfully' })
+  } catch (error) {
+    console.error('Toggle error:', error.message)
+    res.status(500).json({ message: error.message })
+  }
 }
 
 export const updateUserPlan = async (req, res) => {
-  const user = await User.findById(req.params.id)
-  if (!user) return res.status(404).json({ message: 'User not found' })
-  user.subscriptionPlan = req.body.subscriptionPlan
-  await user.save()
-  res.json({ message: `Plan updated to ${user.subscriptionPlan}` })
+  try {
+    // ✅ updateOne bypasses pre-save hook completely
+    await User.updateOne(
+      { _id: req.params.id },
+      { $set: { subscriptionPlan: req.body.subscriptionPlan } }
+    )
+
+    res.json({ message: 'Plan updated successfully' })
+  } catch (error) {
+    console.error('Plan update error:', error.message)
+    res.status(500).json({ message: error.message })
+  }
 }

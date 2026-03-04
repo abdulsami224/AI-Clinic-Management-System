@@ -31,3 +31,13 @@ export const getPatientHistory = async (req, res) => {
     .populate('doctorId', 'name').sort({ createdAt: -1 })
   res.json({ appointments, prescriptions })
 }
+
+export const getPatientMe = async (req, res) => {
+  try {
+    const patient = await Patient.findOne({ email: req.user.email })
+    if (!patient) return res.status(404).json({ message: 'Patient profile not found' })
+    res.json(patient)
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}

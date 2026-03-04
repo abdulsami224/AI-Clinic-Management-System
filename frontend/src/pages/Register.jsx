@@ -7,7 +7,7 @@ import React from 'react'
 export default function Register() {
   const { setUser } = useAuth()
   const navigate = useNavigate()
-  const [form, setForm] = useState({ name: '', email: '', password: '', role: '' })
+  const [form, setForm] = useState({ name: '', email: '', password: '' })
   const [errors, setErrors] = useState({})
   const [serverError, setServerError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -17,7 +17,6 @@ export default function Register() {
     if (!form.name.trim()) newErrors.name = 'Name is required'
     if (!form.email.includes('@')) newErrors.email = 'Enter a valid email'
     if (form.password.length < 6) newErrors.password = 'Password must be at least 6 characters'
-    if (!form.role) newErrors.role = 'Please select a role'
     return newErrors
   }
 
@@ -32,14 +31,7 @@ export default function Register() {
         const res = await axios.post('/auth/register', form)
         const userData = res.data
         setUser(userData)
-        const ROLE_ROUTES = {
-            admin: '/admin/dashboard',
-            doctor: '/doctor/dashboard',
-            receptionist: '/receptionist/dashboard',
-            patient: '/patient/dashboard',
-        }
-
-        navigate(ROLE_ROUTES[userData.role] || '/patient/dashboard')
+        navigate('/patient/dashboard')
     }   catch (err) {
             setServerError(err.response?.data?.message || 'Registration failed')
     }   finally {
@@ -113,25 +105,6 @@ export default function Register() {
           <div className="min-h-[20px] mt-1">
             {errors.password && <p className="text-red-400 text-xs">⚠ {errors.password}</p>}
           </div>
-        </div>
-
-        <div className="mb-6">
-            <label className="block text-gray-400 text-sm mb-1.5">Role <span className="text-red-400">*</span></label>
-                <select
-                    value={form.role}
-                    onChange={e => handleChange('role', e.target.value)}
-                    className={`w-full bg-gray-800 border rounded-xl px-4 py-3 text-white text-sm outline-none transition
-                    ${errors.role ? 'border-red-500/50 bg-red-500/5' : 'border-gray-700 focus:border-violet-500'}`}
-                >
-                    <option value="">Select your role...</option>
-                    <option value="patient">Patient</option>
-                    <option value="doctor">Doctor</option>
-                    <option value="receptionist">Receptionist</option>
-                    <option value="admin">Admin</option>
-                </select>
-            <div className="min-h-[20px] mt-1">
-                {errors.role && <p className="text-red-400 text-xs">⚠ {errors.role}</p>}
-            </div>
         </div>
 
         <button

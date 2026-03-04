@@ -8,20 +8,20 @@ const roleNav = {
     { label: 'Dashboard', icon: '▦', path: '/admin/dashboard' },
     { label: 'Doctors', icon: '⚕', path: '/admin/doctors' },
     { label: 'Receptionists', icon: '👤', path: '/admin/receptionists' },
-    { label: 'All Patients', icon: '🫀', path: '/admin/patients' },
+    { label: 'All Patients', icon: '🙍🏻‍♂️', path: '/admin/patients' },
     { label: 'Analytics', icon: '📊', path: '/admin/analytics' },
   ],
   doctor: [
     { label: 'Dashboard', icon: '▦', path: '/doctor/dashboard' },
     { label: 'Appointments', icon: '📅', path: '/doctor/appointments' },
     { label: 'AI Symptom Checker', icon: '🤖', path: '/doctor/ai-checker' },
-    { label: 'Patients', icon: '🫀', path: '/doctor/patients' },
+    { label: 'Patients', icon: '🙍🏻‍♂️', path: '/doctor/patients' },
   ],
   receptionist: [
     { label: 'Dashboard', icon: '▦', path: '/receptionist/dashboard' },
     { label: 'Add Patient', icon: '➕', path: '/receptionist/add-patient' },
     { label: 'Book Appointment', icon: '📅', path: '/receptionist/book-appointment' },
-    { label: 'All Patients', icon: '🫀', path: '/receptionist/patients' },
+    { label: 'All Patients', icon: '🙍🏻‍♂️', path: '/receptionist/patients' },
   ],
   patient: [
     { label: 'Dashboard', icon: '▦', path: '/patient/dashboard' },

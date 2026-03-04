@@ -11,14 +11,16 @@ const userSchema = new mongoose.Schema({
     default: 'patient' 
   },
   subscriptionPlan: { type: String, enum: ['free', 'pro'], default: 'free' },
-  specialization: { type: String }, // for doctors
+  specialization: { type: String },
   phone: { type: String },
   isActive: { type: Boolean, default: true },
 }, { timestamps: true })
 
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next()
-  this.password = await bcrypt.hash(this.password, 10)
+// ✅ No next() used at all — returns a promise instead
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return
+  const salt = await bcrypt.genSalt(10)
+  this.password = await bcrypt.hash(this.password, salt)
 })
 
 userSchema.methods.matchPassword = async function (enteredPassword) {

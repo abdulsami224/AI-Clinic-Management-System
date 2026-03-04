@@ -225,7 +225,7 @@ export default function ManageDoctors() {
                             ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20'
                             : 'bg-gray-700/50 text-gray-400 border-gray-600 hover:bg-gray-700'}`}
                       >
-                        {doc.subscriptionPlan === 'pro' ? '⭐ Pro' : 'Free'}
+                        {doc.subscriptionPlan === 'pro' ? 'Pro' : 'Free'}
                       </button>
                     </td>
                   </tr>
