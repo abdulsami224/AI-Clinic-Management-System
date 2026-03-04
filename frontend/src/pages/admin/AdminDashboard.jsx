@@ -10,6 +10,7 @@ import React from 'react'
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -37,7 +38,7 @@ export default function AdminDashboard() {
 
           {/* Stat Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-            <StatCard title="Total Patients" value={stats?.totalPatients ?? 0} icon="🫀" color="rose" subtitle="Registered patients" />
+            <StatCard title="Total Patients" value={stats?.totalPatients ?? 0} icon="🙍🏻‍♂️" color="rose" subtitle="Registered patients" />
             <StatCard title="Total Doctors" value={stats?.totalDoctors ?? 0} icon="⚕️" color="cyan" subtitle="Active doctors" />
             <StatCard title="Total Appointments" value={stats?.totalAppointments ?? 0} icon="📅" color="violet" subtitle="All time" />
             <StatCard title="Completed" value={stats?.completedAppointments ?? 0} icon="✅" color="emerald" subtitle="Finished appointments" />

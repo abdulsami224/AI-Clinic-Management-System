@@ -75,7 +75,7 @@ export default function AllPatients() {
               </div>
             ) : filtered.length === 0 ? (
               <div className="text-center py-20 text-gray-600">
-                <p className="text-4xl mb-3">🫀</p>
+                <p className="text-4xl mb-3">🙍🏻‍♂️</p>
                 <p className="text-sm">No patients found</p>
               </div>
             ) : (
