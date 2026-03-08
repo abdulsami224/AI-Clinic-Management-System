@@ -1,7 +1,7 @@
+import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import React from 'react'
-
 
 const roleNav = {
   admin: [
@@ -48,6 +48,7 @@ const roleBadgeColors = {
 export default function Sidebar() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   if (!user) return null
 
@@ -60,12 +61,14 @@ export default function Sidebar() {
     navigate('/login')
   }
 
-  return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-gray-950 border-r border-gray-800/60 flex flex-col z-50">
+  const handleNavClick = () => setMobileOpen(false)
+
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="p-6 border-b border-gray-800/60">
+      <div className="p-5 border-b border-gray-800/60 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${gradientClass} flex items-center justify-center text-white font-bold text-lg shadow-lg`}>
+          <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${gradientClass} flex items-center justify-center text-white font-bold text-lg shadow-lg flex-shrink-0`}>
             ✚
           </div>
           <div>
@@ -73,12 +76,19 @@ export default function Sidebar() {
             <p className="text-gray-500 text-xs">Clinic Management</p>
           </div>
         </div>
+        {/* Close btn mobile only */}
+        <button
+          onClick={() => setMobileOpen(false)}
+          className="lg:hidden text-gray-500 hover:text-white w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-800 transition"
+        >
+          ✕
+        </button>
       </div>
 
       {/* User Info */}
       <div className="px-4 py-4 border-b border-gray-800/60">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${gradientClass} flex items-center justify-center text-white font-bold text-sm`}>
+          <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${gradientClass} flex items-center justify-center text-white font-bold text-sm flex-shrink-0`}>
             {user.name?.charAt(0).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
@@ -100,6 +110,7 @@ export default function Sidebar() {
             <li key={item.path}>
               <NavLink
                 to={item.path}
+                onClick={handleNavClick}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200
                   ${isActive
@@ -126,6 +137,59 @@ export default function Sidebar() {
           Logout
         </button>
       </div>
-    </aside>
+    </div>
+  )
+
+  return (
+    <>
+      {/* ── DESKTOP SIDEBAR ── */}
+      <aside className="hidden lg:flex fixed left-0 top-0 h-screen w-64 bg-gray-950 border-r border-gray-800/60 flex-col z-50">
+        <SidebarContent />
+      </aside>
+
+      {/* ── MOBILE TOP NAVBAR ── */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-gray-950 border-b border-gray-800/60 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${gradientClass} flex items-center justify-center text-white font-bold text-base shadow-lg`}>
+            ✚
+          </div>
+          <p className="text-white font-bold text-sm">MediSaaS</p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${gradientClass} flex items-center justify-center text-white font-bold text-xs`}>
+            {user.name?.charAt(0).toUpperCase()}
+          </div>
+          {/* Hamburger */}
+          <button
+            onClick={() => setMobileOpen(true)}
+            className="w-9 h-9 flex flex-col items-center justify-center gap-1.5 rounded-xl bg-gray-800/60 hover:bg-gray-700 transition"
+            aria-label="Open menu"
+          >
+            <span className="block h-0.5 bg-white rounded-full w-[18px]"></span>
+            <span className="block h-0.5 bg-white rounded-full w-[13px]"></span>
+            <span className="block h-0.5 bg-white rounded-full w-[18px]"></span>
+          </button>
+        </div>
+      </header>
+
+      {/* ── MOBILE DRAWER ── */}
+      {mobileOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 flex">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setMobileOpen(false)}
+          />
+          {/* Drawer */}
+          <div
+            className="relative w-72 max-w-[85vw] h-full bg-gray-950 border-r border-gray-800/60 z-10"
+            onClick={e => e.stopPropagation()}
+          >
+            <SidebarContent />
+          </div>
+        </div>
+      )}
+    </>
   )
 }

@@ -6,7 +6,7 @@ export default function Layout({ children, title, subtitle }) {
   return (
     <div className="min-h-screen bg-gray-950 flex">
       <Sidebar />
-      <main className="flex-1 ml-64 min-h-screen">
+     <main className="flex-1 ml-0 lg:ml-64 min-h-screen w-full">
         {/* Top Bar */}
         <header className="sticky top-0 z-40 bg-gray-950/80 backdrop-blur-md border-b border-gray-800/60 px-8 py-4">
           <div className="flex items-center justify-between">
