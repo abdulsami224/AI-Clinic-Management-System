@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import GoogleSuccess from './pages/auth/GoogleSuccess'
 
 import AdminDashboard from './pages/admin/AdminDashboard'
 import ManageDoctors from './pages/admin/ManageDoctors'
@@ -36,6 +37,7 @@ function App() {
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/auth/google/success" element={<GoogleSuccess />} />
 
           {/* Default redirect */}
           <Route path="/" element={<Navigate to="/login" replace />} />

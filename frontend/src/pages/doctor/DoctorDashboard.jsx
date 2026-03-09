@@ -54,7 +54,7 @@ export default function DoctorDashboard() {
             {[
               { label: 'View Appointments', icon: '📅', desc: 'See your schedule', path: '/doctor/appointments', color: 'from-cyan-600 to-blue-600' },
               { label: 'AI Symptom Checker', icon: '🤖', desc: 'Diagnose with AI', path: '/doctor/ai-checker', color: 'from-violet-600 to-indigo-600' },
-              { label: 'View Patients', icon: '🫀', desc: 'Patient records', path: '/doctor/patients', color: 'from-rose-600 to-pink-600' },
+              { label: 'View Patients', icon: '🙍🏻‍♂️', desc: 'Patient records', path: '/doctor/patients', color: 'from-rose-600 to-pink-600' },
             ].map(action => (
               <button
                 key={action.path}

@@ -14,6 +14,8 @@ const userSchema = new mongoose.Schema({
   specialization: { type: String },
   phone: { type: String },
   isActive: { type: Boolean, default: true },
+  googleId: { type: String },       
+  avatar: { type: String },
 }, { timestamps: true })
 
 // ✅ No next() used at all — returns a promise instead

@@ -89,7 +89,7 @@ export default function Analytics() {
 
         {/* Top Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
-          <StatCard title="Total Patients" value={stats?.totalPatients ?? 0} icon="🫀" color="rose" subtitle="Registered" />
+          <StatCard title="Total Patients" value={stats?.totalPatients ?? 0} icon="🙍🏻‍♂️" color="rose" subtitle="Registered" />
           <StatCard title="Total Doctors" value={stats?.totalDoctors ?? 0} icon="⚕️" color="cyan" subtitle="Active" />
           <StatCard title="Appointments" value={stats?.totalAppointments ?? 0} icon="📅" color="violet" subtitle="All time" />
           <StatCard title="Completed" value={stats?.completedAppointments ?? 0} icon="✅" color="emerald" subtitle="Finished" />
