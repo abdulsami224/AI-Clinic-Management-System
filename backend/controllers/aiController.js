@@ -7,7 +7,7 @@ export const symptomChecker = async (req, res) => {
   const { symptoms, age, gender, history, patientId } = req.body
 
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
     const prompt = `You are a medical AI assistant. Based on the following patient info, provide a structured analysis:
         
@@ -20,12 +20,13 @@ export const symptomChecker = async (req, res) => {
     Please respond in this exact JSON format:
     {
     "possibleConditions": ["condition1", "condition2", "condition3"],
-    "riskLevel": "low/medium/high",
+    "riskLevel": "low",
     "suggestedTests": ["test1", "test2"],
     "advice": "brief advice for the doctor"
     }
 
-    Important: Only respond with the JSON, no extra text.`
+    Important: Only respond with the JSON, no extra text.
+    Important: riskLevel must be exactly "low", "medium", or "high" — nothing else.`
 
     const result = await model.generateContent(prompt)
     const text = result.response.text()
@@ -43,24 +44,34 @@ export const symptomChecker = async (req, res) => {
       }
     }
 
-    // Save to DiagnosisLog
-    await DiagnosisLog.create({
-      patientId,
+    // ✅ Fix 1 — validate riskLevel matches enum exactly
+    const validRiskLevels = ['low', 'medium', 'high']
+    const safeRiskLevel = validRiskLevels.includes(aiData.riskLevel?.toLowerCase())
+      ? aiData.riskLevel.toLowerCase()
+      : 'low'
+
+    // ✅ Fix 2 — only include patientId if it's a non-empty value
+    const logData = {
       doctorId: req.user._id,
       symptoms,
       age,
       gender,
       history,
       aiResponse: text,
-      riskLevel: aiData.riskLevel,
-      possibleConditions: aiData.possibleConditions,
-      suggestedTests: aiData.suggestedTests
-    })
+      riskLevel: safeRiskLevel,
+      possibleConditions: aiData.possibleConditions || [],
+      suggestedTests: aiData.suggestedTests || []
+    }
+
+    if (patientId && patientId !== '') {
+      logData.patientId = patientId  // ✅ only add if valid
+    }
+
+    await DiagnosisLog.create(logData)
 
     res.json({ success: true, data: aiData })
 
   } catch (error) {
-    // Graceful fallback — AI fails but system keeps working
     console.error('AI Error:', error.message)
     res.json({
       success: false,

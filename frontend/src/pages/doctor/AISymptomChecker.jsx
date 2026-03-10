@@ -119,7 +119,9 @@ export default function AISymptomChecker() {
               ⚠ {error}
             </p>
           )}
-
+              
+              
+          {console.log("error", error)}
           <div className="flex gap-3">
             <button
               onClick={handleSubmit}

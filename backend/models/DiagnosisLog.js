@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 const diagnosisLogSchema = new mongoose.Schema({
-  patientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient', required: true },
+  patientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient', required: false },
   doctorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   symptoms: { type: String, required: true },
   age: { type: Number },
