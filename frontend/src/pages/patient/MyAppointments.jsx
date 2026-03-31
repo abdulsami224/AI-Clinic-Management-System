@@ -25,15 +25,23 @@ export default function MyAppointments() {
   const [filter, setFilter] = useState('all')
   const [selectedAppt, setSelectedAppt] = useState(null)
 
+    // useEffect(() => {
+    // // First get the patient record linked to this user account
+    // axios.get('/patients/me')
+    //     .then(res => axios.get(`/patients/${res.data._id}/history`))
+    //     .then(res => setAppointments(res.data.appointments || []))  // or setData(res.data)
+    //     .catch(() => setAppointments([]))
+    //     .finally(() => setLoading(false))
+    // }, [])
+
+
     useEffect(() => {
-    // First get the patient record linked to this user account
-    axios.get('/patients/me')
+      axios.get('/patients/me')
         .then(res => axios.get(`/patients/${res.data._id}/history`))
-        .then(res => setAppointments(res.data.appointments || []))  // or setData(res.data)
+        .then(res => setAppointments(res.data.appointments || []))
         .catch(() => setAppointments([]))
         .finally(() => setLoading(false))
     }, [])
-
   const handleCancel = async (id) => {
     if (!window.confirm('Cancel this appointment?')) return
     try {

@@ -34,6 +34,7 @@ export const getPatientHistory = async (req, res) => {
 
 export const getPatientMe = async (req, res) => {
   try {
+    // ✅ match by email not by _id
     const patient = await Patient.findOne({ email: req.user.email })
     if (!patient) return res.status(404).json({ message: 'Patient profile not found' })
     res.json(patient)

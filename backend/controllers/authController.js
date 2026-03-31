@@ -32,6 +32,10 @@ export const login = async (req, res) => {
   const { email, password } = req.body
   const user = await User.findOne({ email })
 
+  if (!user.isActive) {
+      return res.status(403).json({ message: 'Your account has been deactivated. Please contact the admin.' })
+  }
+
   if (user && (await user.matchPassword(password))) {
     generateToken(res, user._id)
     res.json({ 

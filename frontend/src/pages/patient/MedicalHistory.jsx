@@ -19,14 +19,13 @@ export default function MedicalHistory() {
   const [activeTab, setActiveTab] = useState('timeline')
   const [expandedPrescription, setExpandedPrescription] = useState(null)
 
-    useEffect(() => {
-    // First get the patient record linked to this user account
+  useEffect(() => {
     axios.get('/patients/me')
-        .then(res => axios.get(`/patients/${res.data._id}/history`))
-        .then(res => setAppointments(res.data.appointments || []))  // or setData(res.data)
-        .catch(() => setAppointments([]))
-        .finally(() => setLoading(false))
-    }, [])
+      .then(res => axios.get(`/patients/${res.data._id}/history`))
+      .then(res => setData(res.data))
+      .catch(() => setData({ appointments: [], prescriptions: [] }))
+      .finally(() => setLoading(false))
+  }, [])
 
   // Build unified timeline sorted by date
   const timeline = [

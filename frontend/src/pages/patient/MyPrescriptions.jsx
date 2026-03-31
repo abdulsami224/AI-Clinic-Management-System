@@ -12,11 +12,12 @@ export default function MyPrescriptions() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // In real app you'd have a route for patient's own prescriptions
-    // For now showing placeholder with proper UI
-    setLoading(false)
+    axios.get('/patients/me')
+      .then(res => axios.get(`/patients/${res.data._id}/history`))
+      .then(res => setPrescriptions(res.data.prescriptions || []))
+      .catch(() => setPrescriptions([]))
+      .finally(() => setLoading(false))
   }, [])
-
   const downloadPDF = (prescription) => {
     const doc = new jsPDF()
 

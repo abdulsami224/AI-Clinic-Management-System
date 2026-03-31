@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import axios from '../api/axios'
 import React from 'react'
 
@@ -12,6 +12,8 @@ const ROLE_ROUTES = {
 }
 
 export default function Login() {
+
+  const [searchParams] = useSearchParams()
   const { setUser } = useAuth()
   const navigate = useNavigate()
   const [form, setForm] = useState({ email: '', password: '' })
@@ -32,17 +34,6 @@ export default function Login() {
     if (Object.keys(validationErrors).length > 0) return setErrors(validationErrors)
     setErrors({})
     setLoading(true)
-    // try {
-    //   const res = await axios.post('/auth/login', form)
-    //   const userData = res.data
-    //   setUser(userData)  // save to context + localStorage
-    //   navigate(ROLE_ROUTES[userData.role] || '/login')
-    // } catch (err) {
-    //   setServerError(err.response?.data?.message || 'Invalid credentials')
-    // } finally {
-    //   setLoading(false)
-    // }
-
     try {
       const res = await axios.post('/auth/login', form)
       const userData = res.data
@@ -145,6 +136,14 @@ export default function Login() {
           Continue with Google
         </a>
 
+        {searchParams.get('error') && (
+          <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl text-sm mt-4">
+            {searchParams.get('error') === 'deactivated'
+              ? 'Your account has been deactivated. Please contact the admin.'
+              : 'Google sign-in failed. Please try again.'
+            }
+          </div>
+        )}
         <p className="text-center mt-5 text-sm text-gray-500">
           No account? <Link to="/register" className="text-violet-400 hover:underline">Register here</Link>
         </p>

@@ -12,14 +12,22 @@ passport.use(new GoogleStrategy({
     let user = await User.findOne({ googleId: profile.id })
 
     if (user) {
+      // ✅ Block deactivated google users too
+      if (!user.isActive) {
+        return done(null, false, { message: 'Account deactivated' })
+      }
       return done(null, user)
     }
+
 
     // Check if user exists with same email
     user = await User.findOne({ email: profile.emails[0].value })
 
     if (user) {
-      // Link google id to existing account
+      // ✅ Block deactivated accounts found by email
+      if (!user.isActive) {
+        return done(null, false, { message: 'Account deactivated' })
+      }
       user.googleId = profile.id
       await user.save()
       return done(null, user)

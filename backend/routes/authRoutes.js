@@ -26,40 +26,9 @@ router.get('/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })
 )
 
-// // Google callback — after Google redirects back
-// router.get('/google/callback',
-//   passport.authenticate('google', {
-//     failureRedirect: `${process.env.CLIENT_URL}/login?error=google_failed`,
-//     session: false
-//   }),
-//   async (req, res) => {
-//     try {
-//       // Generate JWT cookie same as normal login
-//       generateToken(res, req.user._id)
-
-//       // Send user data to frontend via URL params
-//       const userData = {
-//         _id: req.user._id,
-//         name: req.user.name,
-//         email: req.user.email,
-//         role: req.user.role,
-//         subscriptionPlan: req.user.subscriptionPlan,
-//         avatar: req.user.avatar || '',
-//       }
-
-//       // Redirect to frontend with user data
-//       const encoded = encodeURIComponent(JSON.stringify(userData))
-//       res.redirect(`${process.env.CLIENT_URL}/auth/google/success?user=${encoded}`)
-
-//     } catch (error) {
-//       res.redirect(`${process.env.CLIENT_URL}/login?error=server_error`)
-//     }
-//   }
-// )
-
 router.get('/google/callback',
   passport.authenticate('google', {
-    failureRedirect: `${process.env.CLIENT_URL}/login?error=google_failed`,
+    failureRedirect: `${process.env.CLIENT_URL}/login?error=deactivated`,
     session: false
   }),
   async (req, res) => {

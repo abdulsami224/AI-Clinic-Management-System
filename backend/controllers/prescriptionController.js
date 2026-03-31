@@ -9,9 +9,23 @@ export const createPrescription = async (req, res) => {
 }
 
 export const getPatientPrescriptions = async (req, res) => {
-  const prescriptions = await Prescription.find({ patientId: req.params.patientId })
-    .populate('doctorId', 'name specialization').sort({ createdAt: -1 })
-  res.json(prescriptions)
+  try {
+    // ✅ First find the Patient document linked to this user email
+    const patient = await Patient.findOne({ email: req.user.email })
+
+    if (!patient) {
+      return res.json([]) // no patient profile yet
+    }
+
+    // ✅ Now fetch prescriptions using the Patient _id
+    const prescriptions = await Prescription.find({ patientId: patient._id })
+      .populate('doctorId', 'name specialization')
+      .sort({ createdAt: -1 })
+
+    res.json(prescriptions)
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
 }
 
 export const getPrescriptionById = async (req, res) => {
